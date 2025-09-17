@@ -30,7 +30,7 @@ const App = () => {
       const response = await axios.get(
         `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&order=market_cap_desc&per_page=250&page=1&sparkline=true&price_change_percentage=24h`
       );
-      const data = response.data.reduce((acc, coin: any) => {
+      const data = response.data.reduce((acc: { [x: string]: { price: any; change24h: any; sparkline: any; image: any; symbol: any; name: any; }; }, coin: any) => {
         acc[coin.id] = {
           price: coin.current_price,
           change24h: coin.price_change_percentage_24h,
@@ -54,7 +54,11 @@ const App = () => {
   }, [watchlist]);
 
   const handleAddTokens = (tokens: { id: string; name: string; symbol: string }[]) => {
-    dispatch(addTokens(tokens));
+    const tokensWithHoldings = tokens.map(token => ({
+      ...token,
+      holdings: 0
+    }));
+    dispatch(addTokens(tokensWithHoldings));
     setIsModalOpen(false);
     fetchPrices();
   };

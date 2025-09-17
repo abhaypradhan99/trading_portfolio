@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { LineChart, Line, ResponsiveContainer } from 'recharts';
-import { MoreVertical, Edit, Trash } from 'lucide-react';
+import {  Edit, Trash } from 'lucide-react';
 
 interface PriceData {
   price: number;

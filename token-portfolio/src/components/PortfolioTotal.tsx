@@ -1,4 +1,4 @@
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, } from 'recharts';
 
 interface Allocation {
   name: string;
@@ -24,7 +24,7 @@ const PortfolioTotal = ({ total, allocations, lastUpdated }: PortfolioTotalProps
   <div className="w-full md:w-1/2 h-48 mt-4 md:mt-0">
     <ResponsiveContainer>
       <PieChart>
-        <Pie data={allocations} dataKey="value" innerRadius={60} outerRadius={80} paddingAngle={5}>
+        <Pie data={allocations.map(a => ({ ...a }))} dataKey="value" innerRadius={60} outerRadius={80} paddingAngle={5}>
           {allocations.map((entry, index) => (
             <Cell key={`cell-${index}`} fill={entry.color} />
           ))}

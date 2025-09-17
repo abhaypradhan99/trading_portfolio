@@ -19,7 +19,7 @@ const AddTokenModal = ({ onClose, onAdd }: AddTokenModalProps) => {
   const [results, setResults] = useState<Coin[]>([]);
   const [trending, setTrending] = useState<Coin[]>([]);
   const [selected, setSelected] = useState<{ id: string; name: string; symbol: string }[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
