@@ -8,7 +8,9 @@ import axios from 'axios';
 import { addTokens, updateHoldings, removeToken } from './store';
 import type { RootState } from './store';
 import { Star } from 'lucide-react';
-
+import logo from './assets/reacta.svg';
+import refreshIcon from './assets/refresh.svg';
+import plusIcon from './assets/plus.svg';
 const App = () => {
   const dispatch = useDispatch();
   const watchlist = useSelector((state: RootState) => state.portfolio.watchlist);
@@ -17,6 +19,8 @@ const App = () => {
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [lastUpdated, setLastUpdated] = useState(new Date());
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const fetchPrices = async () => {
     if (!watchlist.length) {
@@ -53,6 +57,14 @@ const App = () => {
     fetchPrices();
   }, [watchlist]);
 
+  // Reset to first page if current page is empty after removing tokens
+  useEffect(() => {
+    const totalPages = Math.ceil(watchlist.length / itemsPerPage);
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(totalPages);
+    }
+  }, [watchlist.length, currentPage, itemsPerPage]);
+
   const handleAddTokens = (tokens: { id: string; name: string; symbol: string }[]) => {
     const tokensWithHoldings = tokens.map(token => ({
       ...token,
@@ -60,6 +72,7 @@ const App = () => {
     }));
     dispatch(addTokens(tokensWithHoldings));
     setIsModalOpen(false);
+    setCurrentPage(1); // Reset to first page when adding tokens
     fetchPrices();
   };
 
@@ -67,6 +80,24 @@ const App = () => {
     (sum, item) => sum + (prices[item.id]?.price || 0) * item.holdings,
     0
   );
+
+  // Pagination logic
+  const totalPages = Math.ceil(watchlist.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedWatchlist = watchlist.slice(startIndex, endIndex);
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
 
   const allocations = watchlist.map((item) => ({
     name: prices[item.id]?.name || item.name,
@@ -83,9 +114,9 @@ const App = () => {
   return (
     <div className="min-h-screen bg-background p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
-        <header className="flex justify-between items-center mb-4">
+        <header className="flex  sm:flex-row justify-between items-center mb-4 space-y-2 sm:space-y-0">
           <span className="text-xl font-bold flex items-center">
-            <div className="w-4 h-4 bg-accent mr-2"></div> Token Portfolio
+            <div style={{height:'28px',width:"32px",padding:"5px",borderRadius:"9px"}} className="bg-accent mr-2"> <img src={logo} alt="Logo" className="w-full h-full object-contain" /> </div> <span className="text sm:text-base align-middle">Token Portfolio</span> 
           </span>
           <WalletButton />
         </header>
@@ -95,24 +126,26 @@ const App = () => {
           lastUpdated={lastUpdated}
         />
         <div className="mt-8">
-          <div className="flex justify-between items-center mb-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 space-y-2 sm:space-y-0">
             <h2 className="text-lg font-bold flex items-center">
-              <Star className="mr-2 text-yellow-400" size={20} /> Watchlist
+              <Star className="mr-2" color='#A9E851' fill='#A9E851' size={20} /> Watchlist
             </h2>
-            <div className="flex space-x-2">
+            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
                 <button
                 onClick={fetchPrices}
-                className="bg-card text-white px-4 py-2 rounded-md hover:bg-gray-600 shadow-lg"
-                style={{ boxShadow: '0 4px 16px rgba(0,0,0,0.90)' }}
+                className="flex gap-2 text-white px-4 py-2 rounded-md hover:bg-gray-600 shadow-lg justify-center sm:justify-start"
+                style={{  }}
                 >
+                  <img src={refreshIcon} width={20} alt="Refresh" />
                 Refresh Prices
                 </button>
               <button
                 onClick={() => setIsModalOpen(true)}
                 style={{backgroundColor:"#A9E851"}}
-                className="bg-accent text-black px-4 py-2 rounded-md hover:opacity-90"
+                className="bg-accent flex gap-2 text-black px-4 py-2 rounded-md hover:opacity-90 justify-center sm:justify-start"
               >
-                + Add Token
+                  <img src={plusIcon} width={20} alt="Plus" />
+                Add Token
               </button>
             </div>
           </div>
@@ -124,15 +157,31 @@ const App = () => {
             <p className="text-gray-400">Watchlist is empty. Add tokens to get started.</p>
           ) : (
             <WatchlistTable
-              watchlist={watchlist}
+              watchlist={paginatedWatchlist}
               prices={prices}
               onUpdateHoldings={(id, holdings) => dispatch(updateHoldings({ id, holdings }))}
               onRemove={(id) => dispatch(removeToken(id))}
             />
           )}
-          <div className="mt-4 text-sm text-gray-400 flex justify-between">
-            <span>1 – 10 of {watchlist.length}</span>
-            <div>1 of {Math.ceil(watchlist.length / 10)} pages Prev Next</div>
+          <div className="mt-4 text-sm text-gray-400 flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0">
+            <span>{startIndex + 1} – {Math.min(endIndex, watchlist.length)} of {watchlist.length}</span>
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={handlePrevPage}
+                disabled={currentPage === 1}
+                className={`px-2 py-1 rounded ${currentPage === 1 ? 'text-gray-600 cursor-not-allowed' : 'text-accent hover:bg-gray-700'}`}
+              >
+                Prev
+              </button>
+              <span>{currentPage} of {totalPages} pages</span>
+              <button
+                onClick={handleNextPage}
+                disabled={currentPage === totalPages}
+                className={`px-2 py-1 rounded ${currentPage === totalPages ? 'text-gray-600 cursor-not-allowed' : 'text-accent hover:bg-gray-700'}`}
+              >
+                Next
+              </button>
+            </div>
           </div>
         </div>
       </div>
