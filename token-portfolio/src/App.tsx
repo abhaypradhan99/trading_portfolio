@@ -156,33 +156,35 @@ const App = () => {
           ) : watchlist.length === 0 ? (
             <p className="text-gray-400">Watchlist is empty. Add tokens to get started.</p>
           ) : (
-            <WatchlistTable
-              watchlist={paginatedWatchlist}
-              prices={prices}
-              onUpdateHoldings={(id, holdings) => dispatch(updateHoldings({ id, holdings }))}
-              onRemove={(id) => dispatch(removeToken(id))}
-            />
+            <>
+              <WatchlistTable
+                watchlist={paginatedWatchlist}
+                prices={prices}
+                onUpdateHoldings={(id, holdings) => dispatch(updateHoldings({ id, holdings }))}
+                onRemove={(id) => dispatch(removeToken(id))}
+              />
+              <div className="mt-4 text-sm text-gray-400 flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0">
+                <span>{startIndex + 1} – {Math.min(endIndex, watchlist.length)} of {watchlist.length}</span>
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={handlePrevPage}
+                    disabled={currentPage === 1}
+                    className={`px-2 py-1 rounded ${currentPage === 1 ? 'text-gray-600 cursor-not-allowed' : 'text-accent hover:bg-gray-700'}`}
+                  >
+                    Prev
+                  </button>
+                  <span>{currentPage} of {totalPages} pages</span>
+                  <button
+                    onClick={handleNextPage}
+                    disabled={currentPage === totalPages}
+                    className={`px-2 py-1 rounded ${currentPage === totalPages ? 'text-gray-600 cursor-not-allowed' : 'text-accent hover:bg-gray-700'}`}
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            </>
           )}
-          <div className="mt-4 text-sm text-gray-400 flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0">
-            <span>{startIndex + 1} – {Math.min(endIndex, watchlist.length)} of {watchlist.length}</span>
-            <div className="flex items-center space-x-2">
-              <button
-                onClick={handlePrevPage}
-                disabled={currentPage === 1}
-                className={`px-2 py-1 rounded ${currentPage === 1 ? 'text-gray-600 cursor-not-allowed' : 'text-accent hover:bg-gray-700'}`}
-              >
-                Prev
-              </button>
-              <span>{currentPage} of {totalPages} pages</span>
-              <button
-                onClick={handleNextPage}
-                disabled={currentPage === totalPages}
-                className={`px-2 py-1 rounded ${currentPage === totalPages ? 'text-gray-600 cursor-not-allowed' : 'text-accent hover:bg-gray-700'}`}
-              >
-                Next
-              </button>
-            </div>
-          </div>
         </div>
       </div>
       {isModalOpen && (

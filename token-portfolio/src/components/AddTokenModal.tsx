@@ -167,8 +167,6 @@ const AddTokenModal = ({ onClose, onAdd }: AddTokenModalProps) => {
             </div>
           )}
         </div>
-
-        {/* Footer */}
         <div 
           className="p-4 border-t border-gray-700 flex justify-between items-center"
           style={{ backgroundColor: '#1a1a1a' }}
