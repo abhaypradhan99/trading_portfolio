@@ -106,21 +106,24 @@ const WatchlistTable = ({ watchlist, prices, onUpdateHoldings, onRemove }: Watch
                     <button onClick={() => onRemove(item.id)} className="hover:text-red-500"><Trash size={16} /></button>
                   </div>
                   {/* Mobile dropdown */}
-                  <div className="sm:hidden relative" ref={dropdownRef}>
+                  <div className="sm:hidden relative">
                     <button
                       onClick={() => setDropdownOpen(dropdownOpen === item.id ? null : item.id)}
-                      className="p-2 hover:bg-gray-700 rounded"
+                      className="p-2 hover:bg-gray-700 rounded text-gray-400 hover:text-white"
                     >
-                      <MoreHorizontal size={16} />
+                      ⋮
                     </button>
                     {dropdownOpen === item.id && (
-                      <div className="absolute right-0 mt-1 w-32 bg-gray-800 border border-gray-600 rounded-md shadow-lg z-10">
+                      <div
+                        ref={dropdownRef}
+                        className="absolute right-0 bottom-8 w-32 bg-gray-800 border border-gray-600 rounded-md shadow-lg z-50 py-1"
+                      >
                         <button
                           onClick={() => {
                             handleEdit(item.id, item.holdings);
                             setDropdownOpen(null);
                           }}
-                          className="w-full text-left px-3 py-2 hover:bg-gray-700 flex items-center"
+                          className="w-full text-left px-3 py-2 hover:bg-gray-700 flex items-center text-white"
                         >
                           <Edit size={14} className="mr-2" />
                           Edit
@@ -130,7 +133,7 @@ const WatchlistTable = ({ watchlist, prices, onUpdateHoldings, onRemove }: Watch
                             onRemove(item.id);
                             setDropdownOpen(null);
                           }}
-                          className="w-full text-left px-3 py-2 hover:bg-gray-700 text-red-500 flex items-center"
+                          className="w-full text-left px-3 py-2 hover:bg-gray-700 flex items-center text-red-400"
                         >
                           <Trash size={14} className="mr-2" />
                           Delete
