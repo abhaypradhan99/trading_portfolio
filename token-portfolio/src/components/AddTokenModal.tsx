@@ -67,7 +67,7 @@ const AddTokenModal = ({ onClose, onAdd }: AddTokenModalProps) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50">
       <div 
-        className="bg-gray-900 rounded-lg w-full max-w-md max-h-[80vh] overflow-hidden"
+        className="bg-gray-900 rounded-lg w-full max-w-md max-h-[80vh] "
         style={{ 
           backgroundColor: '#1a1a1a',
           border: '1px solid #333'
